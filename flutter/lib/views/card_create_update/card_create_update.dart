@@ -4,6 +4,7 @@ import 'package:delern_flutter/flutter/user_messages.dart';
 import 'package:delern_flutter/models/card_model.dart';
 import 'package:delern_flutter/models/deck_model.dart';
 import 'package:delern_flutter/view_models/card_create_update_bloc.dart';
+import 'package:delern_flutter/views/cards_list/cards_list.dart';
 import 'package:delern_flutter/views/helpers/save_updates_dialog.dart';
 import 'package:delern_flutter/views/helpers/sign_in_widget.dart';
 import 'package:flutter/material.dart';
@@ -179,6 +180,12 @@ class _CardCreateUpdateState extends State<CardCreateUpdate> {
         controlAffinity: ListTileControlAffinity.leading,
       ));
     }
+
+    widgetsList.add(Flex(direction: Axis.vertical, children: <Widget>[
+      ListView.builder(
+          itemBuilder: (context, index) =>
+              CardsList(deck: widget.deck, allowEdit: false)),
+    ]));
 
     return ListView(
       padding: const EdgeInsets.only(left: 8.0, right: 8.0),
