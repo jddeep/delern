@@ -4,7 +4,9 @@ import 'package:delern_flutter/flutter/user_messages.dart';
 import 'package:delern_flutter/models/card_model.dart';
 import 'package:delern_flutter/models/deck_model.dart';
 import 'package:delern_flutter/view_models/card_create_update_bloc.dart';
+import 'package:delern_flutter/view_models/card_list_view_model.dart';
 import 'package:delern_flutter/views/cards_list/cards_list.dart';
+import 'package:delern_flutter/views/cards_list/observing_grid_widget.dart';
 import 'package:delern_flutter/views/helpers/save_updates_dialog.dart';
 import 'package:delern_flutter/views/helpers/sign_in_widget.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +31,7 @@ class _CardCreateUpdateState extends State<CardCreateUpdate> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final FocusNode _frontSideFocus = FocusNode();
   CardCreateUpdateBloc _bloc;
+  CardListViewModel _cardListViewModel;
 
   @override
   void didChangeDependencies() {
@@ -123,6 +126,7 @@ class _CardCreateUpdateState extends State<CardCreateUpdate> {
   }
 
   Widget _buildUserInput() {
+    _cardListViewModel = CardListViewModel(deckKey: widget.deck.key);
     final widgetsList = <Widget>[
       // TODO(ksheremet): limit lines in TextField
       TextField(
@@ -181,11 +185,19 @@ class _CardCreateUpdateState extends State<CardCreateUpdate> {
       ));
     }
 
-    widgetsList.add(Flex(direction: Axis.vertical, children: <Widget>[
-      ListView.builder(
-          itemBuilder: (context, index) =>
-              CardsList(deck: widget.deck, allowEdit: false)),
-    ]));
+    widgetsList.add(
+      ObservingGridWidget(
+        maxCrossAxisExtent: 240.0,
+        items: _cardListViewModel.list,
+        itemBuilder: (item) => CardGridItem(
+              card: item,
+              deck: widget.deck,
+              allowEdit: false,
+            ),
+        // TODO(ksheremet): Consider to remove this field
+        emptyGridUserMessage: AppLocalizations.of(context).emptyCardsList,
+      ),
+    );
 
     return ListView(
       padding: const EdgeInsets.only(left: 8.0, right: 8.0),
