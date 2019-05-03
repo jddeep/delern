@@ -56,6 +56,12 @@ class _CardCreateUpdateState extends State<CardCreateUpdate> {
   }
 
   @override
+  void initState() {
+    _cardListViewModel = CardListViewModel(deckKey: widget.deck.key);
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _frontSideFocus.dispose();
     _bloc?.dispose();
@@ -126,7 +132,6 @@ class _CardCreateUpdateState extends State<CardCreateUpdate> {
   }
 
   Widget _buildUserInput() {
-    _cardListViewModel = CardListViewModel(deckKey: widget.deck.key);
     final widgetsList = <Widget>[
       // TODO(ksheremet): limit lines in TextField
       TextField(
@@ -186,16 +191,20 @@ class _CardCreateUpdateState extends State<CardCreateUpdate> {
     }
 
     widgetsList.add(
-      ObservingGridWidget(
-        maxCrossAxisExtent: 240.0,
-        items: _cardListViewModel.list,
-        itemBuilder: (item) => CardGridItem(
-              card: item,
-              deck: widget.deck,
-              allowEdit: false,
-            ),
-        // TODO(ksheremet): Consider to remove this field
-        emptyGridUserMessage: AppLocalizations.of(context).emptyCardsList,
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ObservingGridWidget(
+            maxCrossAxisExtent: 240.0,
+            items: _cardListViewModel.list,
+            itemBuilder: (item) => CardGridItem(
+                  card: item,
+                  deck: widget.deck,
+                  allowEdit: false,
+                ),
+            emptyGridUserMessage: AppLocalizations.of(context).emptyCardsList,
+          ),
+        ],
       ),
     );
 
